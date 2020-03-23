@@ -1,8 +1,5 @@
 package Zad1;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -16,18 +13,16 @@ class Futil
 {
     static void processDir(String dirName, String resutlFileName)
     {
-        try
-        {
+        try {
             Charset inCharset = Charset.forName("Cp1250");
             Charset outCharset = StandardCharsets.UTF_8;
-            FileChannel outChannel = new FileOutputStream(resutlFileName).getChannel();
-
-            Files.walkFileTree(Paths.get(dirName), new SimpleFileVisitor<Path>(){
+            Files.deleteIfExists(Paths.get(resutlFileName));
+            FileChannel outChannel = FileChannel.open(Files.createFile(Paths.get(resutlFileName)), StandardOpenOption.WRITE);
+            Files.walkFileTree(Paths.get(dirName), new SimpleFileVisitor<Path>() {
                 @Override
-                public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException
-                {
-                    FileChannel inChannel = new FileInputStream(new File(path.toString())).getChannel();
-                    ByteBuffer buffer = ByteBuffer.allocate((int)inChannel.size());
+                public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
+                    FileChannel inChannel = FileChannel.open(path, StandardOpenOption.READ);
+                    ByteBuffer buffer = ByteBuffer.allocate((int) inChannel.size());
                     inChannel.read(buffer);
                     buffer.flip();
                     CharBuffer cBuffer = inCharset.decode(buffer);
@@ -39,9 +34,7 @@ class Futil
             });
             outChannel.close();
             System.out.println("Finished");
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
