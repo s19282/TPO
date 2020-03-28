@@ -58,50 +58,76 @@ public class Service implements Serializable
     }
 
 
-    public String getWeather(String city) throws IOException, JSONException {
-        JSONObject object = new JSONObject(getURLConnection("http://api.openweathermap.org/data/2.5/weather?q="+city+"&appid="+apiKey));
-        return object.toString();
-    }
-
-
-    public double getRateFor(String currency) throws IOException, JSONException {
-        if(currency.equalsIgnoreCase(getCurrency(locale)))
-            return 1D;
-        else
+    public String getWeather(String city) {
+        try
         {
-            JSONObject object = new JSONObject(getURLConnection("https://api.exchangeratesapi.io/latest?base="+getCurrency(locale)+"&symbols="+currency));
-            JSONObject rates = new JSONObject(object.get("rates").toString());
-            return rates.getDouble(currency);
+            JSONObject object = new JSONObject(getURLConnection("http://api.openweathermap.org/data/2.5/weather?q="+city+","+countryCode.get(locale.getDisplayCountry())+"&appid="+apiKey));
+            return object.toString();
         }
+        catch (IOException | JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return "---";
     }
 
 
-    public double getNBPRate() throws IOException, JSONException {
-       if(locale.getDisplayCountry().equalsIgnoreCase("POLAND"))
-       {
-           return 1D;
-       }
-       else
-       {
-           JSONObject xml;
-           try
-           {
-               xml = new JSONObject(getURLConnection("http://api.nbp.pl/api/exchangerates/rates/a/"+getCurrency(locale)+"/"));
-           }
-           catch (FileNotFoundException e)
-           {
-               try
-               {
-                   xml = new JSONObject(getURLConnection("http://api.nbp.pl/api/exchangerates/rates/b/"+getCurrency(locale)+"/"));
-               }
-               catch (FileNotFoundException e1)
-               {
-                   System.out.println("Nie znaleziono waluty");
-                   return -1D;
-               }
-           }
-           JSONArray value = xml.getJSONArray("rates");
-           return value.getJSONObject(0).getDouble("mid");
-       }
+    public double getRateFor(String currency)
+    {
+        try
+        {
+            if(currency.equalsIgnoreCase(getCurrency(locale)))
+                return 1D;
+            else
+            {
+                JSONObject object = new JSONObject(getURLConnection("https://api.exchangeratesapi.io/latest?base="+getCurrency(locale)+"&symbols="+currency));
+                JSONObject rates = new JSONObject(object.get("rates").toString());
+                return rates.getDouble(currency);
+            }
+        }
+        catch (IOException | JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return -1D;
+    }
+
+
+    public double getNBPRate()
+    {
+        try
+        {
+            if(locale.getDisplayCountry().equalsIgnoreCase("POLAND"))
+            {
+                return 1D;
+            }
+            else
+            {
+                JSONObject xml;
+                try
+                {
+                    xml = new JSONObject(getURLConnection("http://api.nbp.pl/api/exchangerates/rates/a/"+getCurrency(locale)+"/"));
+                }
+                catch (FileNotFoundException e)
+                {
+                    try
+                    {
+                        xml = new JSONObject(getURLConnection("http://api.nbp.pl/api/exchangerates/rates/b/"+getCurrency(locale)+"/"));
+                    }
+                    catch (FileNotFoundException e1)
+                    {
+                        System.out.println("Nie znaleziono waluty");
+                        return -1D;
+                    }
+                }
+                JSONArray value = xml.getJSONArray("rates");
+                return value.getJSONObject(0).getDouble("mid");
+            }
+        }
+        catch (IOException | JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return -1D;
     }
 }  
