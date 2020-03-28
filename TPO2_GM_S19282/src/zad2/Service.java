@@ -59,6 +59,7 @@ public class Service implements Serializable
 
 
     public String getWeather(String city) {
+        city=city.toUpperCase();
         try
         {
             JSONObject object = new JSONObject(getURLConnection("http://api.openweathermap.org/data/2.5/weather?q="+city+","+countryCode.get(locale.getDisplayCountry())+"&appid="+apiKey));
@@ -74,6 +75,7 @@ public class Service implements Serializable
 
     public double getRateFor(String currency)
     {
+        currency=currency.toUpperCase();
         try
         {
             if(currency.equalsIgnoreCase(getCurrency(locale)))
