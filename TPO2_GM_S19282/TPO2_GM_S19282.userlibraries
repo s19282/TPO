@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eclipse-userlibraries>
+  <library name="java-json">
+    <archive path="C:/Users/Mateusz/Desktop/PJATK/Rok2/Semestr2/TPO/Github/TPO/TPO2_GM_S19282/lib/java-json.jar" />
+  </library>
+  <library name="production" />
+</eclipse-userlibraries>
+

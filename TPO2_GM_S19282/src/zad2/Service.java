@@ -17,7 +17,7 @@ import java.util.Currency;
 import java.util.HashMap;
 import java.util.Locale;
 
-public class Service implements Serializable
+public class Service
 {
     private static final String apiKey = "59045bb3edb0ac8183aee91bb2c18ee9";
     Locale locale;
@@ -37,9 +37,15 @@ public class Service implements Serializable
     }
 
 
-    public static String getCurrency(Locale country)
+    public String getCurrency(Locale country)
     {
         return codeCurrency.get(countryCode.get(country.getDisplayCountry()));
+    }
+
+
+    public String getCurrency()
+    {
+        return codeCurrency.get(countryCode.get(locale.getDisplayCountry()));
     }
 
 
@@ -105,16 +111,16 @@ public class Service implements Serializable
             }
             else
             {
-                JSONObject xml;
+                JSONObject json;
                 try
                 {
-                    xml = new JSONObject(getURLConnection("http://api.nbp.pl/api/exchangerates/rates/a/"+getCurrency(locale)+"/"));
+                    json = new JSONObject(getURLConnection("http://api.nbp.pl/api/exchangerates/rates/a/"+getCurrency(locale)+"/"));
                 }
                 catch (FileNotFoundException e)
                 {
                     try
                     {
-                        xml = new JSONObject(getURLConnection("http://api.nbp.pl/api/exchangerates/rates/b/"+getCurrency(locale)+"/"));
+                        json = new JSONObject(getURLConnection("http://api.nbp.pl/api/exchangerates/rates/b/"+getCurrency(locale)+"/"));
                     }
                     catch (FileNotFoundException e1)
                     {
@@ -122,7 +128,7 @@ public class Service implements Serializable
                         return -1D;
                     }
                 }
-                JSONArray value = xml.getJSONArray("rates");
+                JSONArray value = json.getJSONArray("rates");
                 return value.getJSONObject(0).getDouble("mid");
             }
         }
