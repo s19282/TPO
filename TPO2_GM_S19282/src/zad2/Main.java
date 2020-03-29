@@ -8,6 +8,7 @@ package zad2;
 
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -62,7 +63,7 @@ public class Main extends Application
       weather.setAlignment(Pos.CENTER_RIGHT);
       weather.setStyle("-fx-font-size: 15;" +
               "-fx-background-color: #7d05ff;");
-      weather.setPadding(new Insets(0,0,0,430));
+      weather.setPadding(new Insets(0,0,0,380));
       rates.setAlignment(Pos.CENTER_LEFT);
       rates.setStyle("-fx-font-size: 15;" +
               "-fx-background-color: #4553ff;");
@@ -83,24 +84,27 @@ public class Main extends Application
       currency.setStyle("-fx-background-insets: 5px;");
       button.setStyle("-fx-background-insets: 5px;");
       mainBox.getChildren().addAll(top);
+      ImageView notFound = new ImageView(new Image(new File("img/notFound.png").toURI().toString()));
+
+
       button.setOnAction(event ->
       {
+          weather.getChildren().clear();
+          mainBox.getChildren().removeAll(notFound,webView);
           Service service = new Service(country.getText());
+
           if(service.getRateFor(currency.getText())==-1)
-          {
               rate1.setText("Oops...there was a problem, restart app or try again");
-              weather.setPadding(new Insets(0,0,0,30));
-          }
           else
               rate1.setText("1"+service.getCurrency()+" = "+service.getRateFor(currency.getText())+currency.getText().toUpperCase());
           if(service.getNBPRate()==-1)
-          {
               rate2.setText("Oops...there was a problem, restart app or try again");
-              weather.setPadding(new Insets(0,0,0,30));
-          }
           else
               rate2.setText("1PLN = "+service.getNBPRate()+service.getCurrency());
+
           webEngine.load("https://en.wikipedia.org/wiki/"+city.getText());
+
+
           try
           {
               VBox left = new VBox();
@@ -137,23 +141,27 @@ public class Main extends Application
               left.getChildren().addAll(labelL);
               right.getChildren().addAll(laberR);
               weather.getChildren().addAll(left,iconAndDescription,right);
-              top.getChildren().add(weather);
-              mainBox.getChildren().addAll(webView);
+
+              //mainBox.getChildren().remove(loading);
+              mainBox.getChildren().add(webView);
+
+
+              //mainBox.getChildren().remove(loading);
           }
           catch (JSONException e)
           {
+             // mainBox.getChildren().remove(loading);
               weather.setPadding(new Insets(0,0,0,30));
               weather.getChildren().add(new Label("Oops...there was a problem, restart app or try again"));
-              top.getChildren().add(weather);
-              mainBox.getChildren().add(new ImageView(new Image(new File("img/notFound.png").toURI().toString())));
-              System.out.println("tets");
-              e.printStackTrace();
+
+              mainBox.getChildren().add(notFound);
+              System.out.println("Data not found");
           }
       });
 
       inputData.getChildren().addAll(country,city,currency,button);
       rates.getChildren().addAll(rate1,rate2);
-      top.getChildren().addAll(inputData,rates);
+      top.getChildren().addAll(inputData,rates,weather);
       primaryStage.setScene(new Scene(mainBox, 1280,720));
       primaryStage.setResizable(false);
       primaryStage.show();
