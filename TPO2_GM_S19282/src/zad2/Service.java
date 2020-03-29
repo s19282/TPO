@@ -73,7 +73,7 @@ public class Service
         }
         catch (IOException | JSONException e)
         {
-            e.printStackTrace();
+            System.out.println("City not found");
         }
         return "---";
     }
@@ -95,7 +95,7 @@ public class Service
         }
         catch (IOException | JSONException e)
         {
-            e.printStackTrace();
+            System.out.println("Currency 1 not found");
         }
         return -1D;
     }
@@ -124,7 +124,7 @@ public class Service
                     }
                     catch (FileNotFoundException e1)
                     {
-                        System.out.println("Nie znaleziono waluty");
+                        System.out.println("Currency 2 not found");
                         return -1D;
                     }
                 }
@@ -134,7 +134,7 @@ public class Service
         }
         catch (IOException | JSONException e)
         {
-            e.printStackTrace();
+            System.out.println("Currency 2 not found");
         }
         return -1D;
     }
