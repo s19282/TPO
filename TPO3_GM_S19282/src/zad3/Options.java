@@ -15,9 +15,31 @@ public class Options {
   private int port;
   private boolean concurMode;
   private boolean showSendRes;
-  private Map<String, List<String>> clientsMap = new LinkedHashMap<>();
+  private Map<String, List<String>> clientsMap;
 
-  public Options(String host, int port, boolean concurMode, boolean showSendRes, 
+  public void setHost(String host) {
+    this.host = host;
+  }
+
+  public void setPort(int port) {
+    this.port = port;
+  }
+
+  public void setConcurMode(boolean concurMode) {
+    this.concurMode = concurMode;
+  }
+
+  public void setShowSendRes(boolean showSendRes) {
+    this.showSendRes = showSendRes;
+  }
+
+  public void setClientsMap(Map<String, List<String>> clientsMap) {
+    this.clientsMap = clientsMap;
+  }
+
+  public Options() { }
+
+  public Options(String host, int port, boolean concurMode, boolean showSendRes,
                  Map<String, List<String>> clientsMap) {
     this.host = host;
     this.port = port;
