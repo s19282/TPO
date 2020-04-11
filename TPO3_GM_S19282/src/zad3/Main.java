@@ -9,8 +9,7 @@ package zad3;
 
 public class Main {
 
-  public static void main(String[] args)
-  {
+  public static void main(String[] args) throws Exception {
     String fileName = System.getProperty("user.home") + "/PassTimeOptions.yaml";
     Options opts = Tools.createOptionsFromYaml(fileName);
     System.out.println(opts);
