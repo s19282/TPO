@@ -20,14 +20,12 @@ public class Time
     public static String passed(String from, String to)
     {
         Locale.setDefault((new Locale("pl")));
+        StringBuilder output = new StringBuilder();
         NumberFormat nf = NumberFormat.getInstance(Locale.US);
         nf.setMaximumFractionDigits(2);
         nf.setGroupingUsed(false);
-        Pattern withTime = Pattern.compile(".*T.*");
-        Matcher mFrom = withTime.matcher(from);
-        Matcher mTo = withTime.matcher(to);
-        StringBuilder output = new StringBuilder();
-        if(mFrom.matches()&&mTo.matches())
+
+        if(withTime(from,to))
         {
             try
             {
@@ -73,6 +71,16 @@ public class Time
         }
         return output.toString();
     }
+
+
+    private static boolean withTime(String from, String to)
+    {
+        Pattern withTime = Pattern.compile(".*T.*");
+        Matcher mFrom = withTime.matcher(from);
+        Matcher mTo = withTime.matcher(to);
+        return mFrom.matches() && mTo.matches();
+    }
+
 
     private static void additionalLines(StringBuilder output, Period period, long between)
     {
