@@ -6,9 +6,10 @@
 
 package zad3;
 
+import java.text.NumberFormat;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.time.format.TextStyle;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -18,7 +19,9 @@ public class Time
 {
     public static String passed(String from, String to)
     {
-        Locale locale = new Locale("pl","PL");
+        Locale.setDefault((new Locale("pl")));
+        NumberFormat nf = NumberFormat.getInstance(Locale.US);
+        nf.setMaximumFractionDigits(2);
         Pattern withTime = Pattern.compile(".*T.*");
         Matcher mFrom = withTime.matcher(from);
         Matcher mTo = withTime.matcher(to);
@@ -27,21 +30,15 @@ public class Time
         {
             try
             {
-
                 ZonedDateTime dtFrom = ZonedDateTime.of(LocalDateTime.parse(from),ZoneId.of("Europe/Warsaw"));
                 ZonedDateTime dtTo = ZonedDateTime.of(LocalDateTime.parse(to),ZoneId.of("Europe/Warsaw"));
                 long days = ChronoUnit.DAYS.between(dtFrom, dtTo);
                 Period period = Period.between(dtFrom.toLocalDate(),dtTo.toLocalDate());
 
-                output.append("Od ").append(dtFrom.getDayOfMonth()).append(" ").append(dtFrom.getMonth()
-                        .getDisplayName(TextStyle.FULL,locale)).append(" ").append(dtFrom.getYear()).append(" (")
-                        .append(dtFrom.getDayOfWeek().getDisplayName(TextStyle.FULL,locale)).append(") godz. ")
-                        .append(dtFrom.getHour()==0?"00":dtFrom.getHour()).append(":").append(dtFrom.getMinute()==0?"00":dtFrom.getMinute())
-                        .append(" do ").append(dtTo.getDayOfMonth()).append(" ").append(dtTo.getMonth().getDisplayName(TextStyle.FULL,locale))
-                        .append(" ").append(dtTo.getYear()).append(" (").append(dtTo.getDayOfWeek().getDisplayName(TextStyle.FULL,locale))
-                        .append(") godz. ").append(dtTo.getHour()==0?"00":dtTo.getHour()) .append(":")
-                        .append(dtTo.getMinute()==0?"00":dtTo.getMinute()).append("\n- mija: ").append(days)
-                        .append(days==1?" dzień,":" dni,").append(" tygodni ").append(days%7==0?days/7:String.format("%.2f",days/7D))
+                output.append(dtFrom.format(DateTimeFormatter.ofPattern("'Od' d MMMM yyyy (cccc) 'godz.' HH:mm ")))
+                        .append(dtTo.format(DateTimeFormatter.ofPattern("'do' d MMMM yyyy (cccc) 'godz.' HH:mm")))
+                        .append("\n- mija: ").append(days).append(days==1?" dzień":" dni").append(", tygodni ")
+                        .append(days%7==0?days/7:nf.format(days/7D))
                         .append("\n- godzin: ").append(ChronoUnit.HOURS.between(dtFrom, dtTo)).append(", minut: " )
                         .append(ChronoUnit.MINUTES.between(dtFrom, dtTo));
 
@@ -61,16 +58,10 @@ public class Time
                 long days = ChronoUnit.DAYS.between(dtFrom, dtTo);
                 Period period = Period.between(dtFrom,dtTo);
 
-                output.append("Od ").append(dtFrom.getDayOfMonth()).append(" ")
-                        .append(dtFrom.getMonth().getDisplayName(TextStyle.FULL,locale)).append(" ")
-                        .append(dtFrom.getYear()).append(" (")
-                        .append(dtFrom.getDayOfWeek().getDisplayName(TextStyle.FULL,locale))
-                        .append(") do ").append(dtTo.getDayOfMonth()).append(" ")
-                        .append(dtTo.getMonth().getDisplayName(TextStyle.FULL,locale))
-                        .append(" ").append(dtTo.getYear()).append(" (")
-                        .append(dtTo.getDayOfWeek().getDisplayName(TextStyle.FULL,locale))
-                        .append(")\n- mija: ").append(days).append(" dni, tygodni ")
-                        .append(days%7==0?days/7: String.format("%.2f",days/7D));
+                output.append(dtFrom.format(DateTimeFormatter.ofPattern("'Od' d MMMM yyyy (cccc) ")))
+                        .append(dtTo.format(DateTimeFormatter.ofPattern("'do' d MMMM yyyy (cccc)")))
+                        .append("\n- mija: ").append(days).append(days==1?" dzień":" dni").append(", tygodni ")
+                        .append(days%7==0?days/7:nf.format(days/7D));
 
                 additionalLines(output, period, ChronoUnit.DAYS.between(dtFrom, dtTo));
             }
