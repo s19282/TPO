@@ -22,6 +22,7 @@ public class Time
         Locale.setDefault((new Locale("pl")));
         NumberFormat nf = NumberFormat.getInstance(Locale.US);
         nf.setMaximumFractionDigits(2);
+        nf.setGroupingUsed(false);
         Pattern withTime = Pattern.compile(".*T.*");
         Matcher mFrom = withTime.matcher(from);
         Matcher mTo = withTime.matcher(to);
@@ -37,9 +38,9 @@ public class Time
 
                 output.append(dtFrom.format(DateTimeFormatter.ofPattern("'Od' d MMMM yyyy (cccc) 'godz.' HH:mm ")))
                         .append(dtTo.format(DateTimeFormatter.ofPattern("'do' d MMMM yyyy (cccc) 'godz.' HH:mm")))
-                        .append("\n- mija: ").append(days).append(days==1?" dzień":" dni").append(", tygodni ")
+                        .append("\n - mija: ").append(days).append(days==1?" dzień":" dni").append(", tygodni ")
                         .append(days%7==0?days/7:nf.format(days/7D))
-                        .append("\n- godzin: ").append(ChronoUnit.HOURS.between(dtFrom, dtTo)).append(", minut: " )
+                        .append("\n - godzin: ").append(ChronoUnit.HOURS.between(dtFrom, dtTo)).append(", minut: " )
                         .append(ChronoUnit.MINUTES.between(dtFrom, dtTo));
 
                 additionalLines(output, period, ChronoUnit.DAYS.between(dtFrom, dtTo));
@@ -60,7 +61,7 @@ public class Time
 
                 output.append(dtFrom.format(DateTimeFormatter.ofPattern("'Od' d MMMM yyyy (cccc) ")))
                         .append(dtTo.format(DateTimeFormatter.ofPattern("'do' d MMMM yyyy (cccc)")))
-                        .append("\n- mija: ").append(days).append(days==1?" dzień":" dni").append(", tygodni ")
+                        .append("\n - mija: ").append(days).append(days==1?" dzień":" dni").append(", tygodni ")
                         .append(days%7==0?days/7:nf.format(days/7D));
 
                 additionalLines(output, period, ChronoUnit.DAYS.between(dtFrom, dtTo));
@@ -73,11 +74,12 @@ public class Time
         return output.toString();
     }
 
-    private static void additionalLines(StringBuilder output, Period period, long between) {
+    private static void additionalLines(StringBuilder output, Period period, long between)
+    {
         if(between >=1)
         {
             boolean first=true;
-            output.append("\n- kalendarzowo: ");
+            output.append("\n - kalendarzowo: ");
             if(period.getYears()>=1)
             {
                 output.append(period.getYears());
