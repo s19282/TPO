@@ -12,7 +12,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 
-public class Client extends Thread
+public class Client
 {
     private final String host;
     private final int port;
@@ -46,18 +46,7 @@ public class Client extends Thread
             e.printStackTrace();
         }
     }
-//    public void disconnect()
-//    {
-//        try
-//        {
-//            channel.socket().close();
-//            channel.close();
-//        }
-//        catch (IOException e)
-//        {
-//            e.printStackTrace();
-//        }
-//    }
+
     public String send(String req)
     {
         StringBuilder sb = new StringBuilder();
