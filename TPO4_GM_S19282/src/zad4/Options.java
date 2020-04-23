@@ -26,6 +26,29 @@ public class Options {
     this.clientsMap = clientsMap;
   }
 
+  public Options() {
+  }
+
+  public void setHost(String host) {
+    this.host = host;
+  }
+
+  public void setPort(int port) {
+    this.port = port;
+  }
+
+  public void setConcurMode(boolean concurMode) {
+    this.concurMode = concurMode;
+  }
+
+  public void setShowSendRes(boolean showSendRes) {
+    this.showSendRes = showSendRes;
+  }
+
+  public void setClientsMap(Map<String, List<String>> clientsMap) {
+    this.clientsMap = clientsMap;
+  }
+
   public String getHost() {
     return host;
   }
