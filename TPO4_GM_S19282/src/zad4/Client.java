@@ -38,20 +38,13 @@ public class Client
         try
         {
             server = SocketChannel.open();
-            server.configureBlocking(false);
             server.connect(new InetSocketAddress(host,port));
-
-            while (!server.finishConnect())
-            {
- //               System.out.println("c> Connecting...");
-                Thread.sleep(100);
-            }
- //           System.out.println("c> Connected");
         }
-        catch (IOException | InterruptedException e)
+        catch (IOException  e)
         {
             e.printStackTrace();
         }
+
     }
 
     public String send(String req)
@@ -60,7 +53,6 @@ public class Client
         try
         {
             server.write(StandardCharsets.UTF_8.encode(req));
-
             server.read(inBuf);
             inBuf.flip();
             response.append(StandardCharsets.UTF_8.decode(inBuf));

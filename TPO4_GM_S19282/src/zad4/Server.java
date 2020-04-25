@@ -82,9 +82,9 @@ public class Server
         SocketChannel client = (SocketChannel) key.channel();
         client.read(inBuf);
         inBuf.flip();
-        System.out.println(client.getRemoteAddress());
         System.out.println("s> "+StandardCharsets.UTF_8.decode(inBuf));
-        client.write(StandardCharsets.UTF_8.encode("test"));
+        inBuf.flip();
+        client.write(inBuf);
         inBuf.clear();
     }
 
