@@ -17,7 +17,7 @@ public class Client
     private final String host;
     private final int port;
     private final String clientID;
-    private SocketChannel channel;
+    private SocketChannel server;
     private static final ByteBuffer inBuf = ByteBuffer.allocateDirect(1024);
 
 
@@ -37,11 +37,18 @@ public class Client
     {
         try
         {
-            channel = SocketChannel.open();
-            channel.configureBlocking(false);
-            channel.connect(new InetSocketAddress(host,port));
+            server = SocketChannel.open();
+            server.configureBlocking(false);
+            server.connect(new InetSocketAddress(host,port));
+
+            while (!server.finishConnect())
+            {
+ //               System.out.println("c> Connecting...");
+                Thread.sleep(100);
+            }
+ //           System.out.println("c> Connected");
         }
-        catch (IOException e)
+        catch (IOException | InterruptedException e)
         {
             e.printStackTrace();
         }
@@ -49,33 +56,17 @@ public class Client
 
     public String send(String req)
     {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder response = new StringBuilder();
         try
         {
-            ByteBuffer outBuffer = StandardCharsets.UTF_8.encode(req);
-            channel.write(outBuffer);
-            while (true)
-            {
-                inBuf.clear();
-                int readBytes = channel.read(inBuf);
-                if(readBytes == 0)
-                {
-                    Thread.sleep(200);
-                }
-                else if(readBytes == -1)
-                {
-                    channel.socket().close();
-                    channel.close();
-                    break;
-                }
-                else
-                {
-                    inBuf.flip();
-                    sb.append(StandardCharsets.UTF_8.decode(inBuf));
-                }
-            }
+            server.write(StandardCharsets.UTF_8.encode(req));
+
+            server.read(inBuf);
+            inBuf.flip();
+            response.append(StandardCharsets.UTF_8.decode(inBuf));
+            inBuf.clear();
         }
-        catch (IOException | InterruptedException ignored){}
-        return sb.toString();
+        catch (IOException ignored){}
+        return response.toString();
     }
 }

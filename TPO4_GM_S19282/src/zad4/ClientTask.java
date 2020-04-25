@@ -27,10 +27,11 @@ public class ClientTask implements Runnable
         return new ClientTask(c,reqs,showSendRes);
     }
 
+
     @Override
     public void run()
     {
-        c.start();
+        c.connect();
         c.send("login "+c.getClientID());
         for(String request : reqs)
             c.send(request);
