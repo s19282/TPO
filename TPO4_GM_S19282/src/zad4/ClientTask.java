@@ -28,9 +28,8 @@ public class ClientTask extends Throwable implements Runnable
         return new ClientTask(c,reqs,showSendRes);
     }
 
-    public String get() throws InterruptedException, ExecutionException {
-        if(Thread.interrupted())
-            throw new InterruptedException();
+    public String get() throws InterruptedException, ExecutionException
+    {
         if(this.getCause()!=null)
             throw new ExecutionException(this.getCause());
         return c.getLog();

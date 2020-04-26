@@ -57,31 +57,15 @@ public class Server
                     selector.select();
                     Set<SelectionKey> keys = selector.selectedKeys();
                     Iterator<SelectionKey> iter = keys.iterator();
-                    while (iter.hasNext()) {
-
+                    while (iter.hasNext())
+                    {
                         SelectionKey key = iter.next();
-
-                        if (key.isAcceptable()) {
+                        if (key.isAcceptable())
                             register(selector, server);
-                        }
-
-                        if (key.isReadable()) {
+                        if (key.isReadable())
                             response(key);
-                        }
                         iter.remove();
                     }
-//                    for (SelectionKey key : keys)
-//                    {
-//                        if (key.isAcceptable())
-//                        {
-//                            register(selector,server);
-//                        }
-//                        if(key.isReadable())
-//                        {
-//                            response(key);
-//                        }
-//                        keys.remove(key);
-//                    }
                 }
             }
             catch (IOException e)
@@ -102,11 +86,11 @@ public class Server
 
         serverRequests.add(addRequestsLog(request,clientID));
         addClientLog(request,clientID);
-        client.write(StandardCharsets.UTF_8.encode(createResponse(request,clientID)));
+        client.write(StandardCharsets.UTF_8.encode(createResponseMsg(request,clientID)));
 
         inBuf.clear();
     }
-    private String createResponse(String request,String clientID)
+    private String createResponseMsg(String request, String clientID)
     {
         StringBuilder response = new StringBuilder();
         if(request.equals("bye"))
