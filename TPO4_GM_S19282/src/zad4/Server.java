@@ -56,18 +56,32 @@ public class Server
                 {
                     selector.select();
                     Set<SelectionKey> keys = selector.selectedKeys();
-                    for (SelectionKey key : keys)
-                    {
-                        if (key.isAcceptable())
-                        {
-                            register(selector,server);
+                    Iterator<SelectionKey> iter = keys.iterator();
+                    while (iter.hasNext()) {
+
+                        SelectionKey key = iter.next();
+
+                        if (key.isAcceptable()) {
+                            register(selector, server);
                         }
-                        if(key.isReadable())
-                        {
+
+                        if (key.isReadable()) {
                             response(key);
                         }
-                        keys.remove(key);
+                        iter.remove();
                     }
+//                    for (SelectionKey key : keys)
+//                    {
+//                        if (key.isAcceptable())
+//                        {
+//                            register(selector,server);
+//                        }
+//                        if(key.isReadable())
+//                        {
+//                            response(key);
+//                        }
+//                        keys.remove(key);
+//                    }
                 }
             }
             catch (IOException e)
@@ -86,10 +100,14 @@ public class Server
         String clientID = request.substring(0,request.indexOf('#'));
         request=request.substring(request.indexOf('#')+1);
 
-
         serverRequests.add(addRequestsLog(request,clientID));
         addClientLog(request,clientID);
+        client.write(StandardCharsets.UTF_8.encode(createResponse(request,clientID)));
 
+        inBuf.clear();
+    }
+    private String createResponse(String request,String clientID)
+    {
         StringBuilder response = new StringBuilder();
         if(request.equals("bye"))
             response.append("logged out");
@@ -104,10 +122,8 @@ public class Server
             response.append("logged in");
         else
             response.append(Time.passed(request.split(" ")[0],request.split(" ")[1]));
-        client.write(StandardCharsets.UTF_8.encode(response.toString()));
-        inBuf.clear();
+        return response.toString();
     }
-
     private void register(Selector selector, ServerSocketChannel serverSocket) throws IOException
     {
         SocketChannel client = serverSocket.accept();
@@ -148,19 +164,22 @@ public class Server
             case "login":
             {
                 log.append(" logged in at ");
+                log.append(new SimpleDateFormat("HH:mm:ss.SSS").format(System.currentTimeMillis()));
                 break;
             }
             case  "bye":
             {
                 log.append(" logged out at ");
+                log.append(new SimpleDateFormat("HH:mm:ss.SSS").format(System.currentTimeMillis()));
                 break;
             }
             default:
             {
                 log.append(" request at ");
+                log.append(new SimpleDateFormat("HH:mm:ss.SSS").format(System.currentTimeMillis()));
+                log.append(": \"").append(request).append("\"");
             }
         }
-        log.append(new SimpleDateFormat("HH:mm:ss.SSS").format(System.currentTimeMillis()));
         return log.toString();
     }
 

@@ -15,7 +15,6 @@ public class ClientTask extends Throwable implements Runnable
     Client c;
     List<String> reqs;
     boolean showSendRes;
-    String logs;
 
     public ClientTask(Client c, List<String> reqs, boolean showSendRes)
     {
@@ -34,27 +33,31 @@ public class ClientTask extends Throwable implements Runnable
             throw new InterruptedException();
         if(this.getCause()!=null)
             throw new ExecutionException(this.getCause());
-        return logs;
+        return c.getLog();
     }
 
     @Override
-    public void run()
+    public  void run()
     {
-        c.connect();
-        if(showSendRes)
-        {
-            System.out.println(c.send("login "+c.getClientID()));
-            for(String request : reqs)
-                System.out.println(c.send(request));
-            System.out.println(c.send("bye and log transfer"));
-        }
-        else
-        {
-            c.send("login "+c.getClientID());
-            for(String request : reqs)
-                c.send(request);
-            c.send("bye and log transfer");
-        }
-        logs=c.send("#"+c.getClientID()+"#giveMeMyLog");
+            c.connect();
+            if (showSendRes)
+            {
+                System.out.println(c.send("login " + c.getClientID()));
+                for (String request : reqs)
+                    System.out.println(c.send(request));
+                c.setLog(c.send("bye and log transfer"));
+                try {
+                    System.out.println(c.getLog());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            else
+            {
+                c.send("login " + c.getClientID());
+                for (String request : reqs)
+                    c.send(request);
+                c.setLog(c.send("bye and log transfer"));
+            }
     }
 }
