@@ -8,12 +8,14 @@ package zad4;
 
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
-public class ClientTask implements Runnable
+public class ClientTask extends Throwable implements Runnable
 {
     Client c;
     List<String> reqs;
     boolean showSendRes;
+    String logs;
 
     public ClientTask(Client c, List<String> reqs, boolean showSendRes)
     {
@@ -27,14 +29,32 @@ public class ClientTask implements Runnable
         return new ClientTask(c,reqs,showSendRes);
     }
 
+    public String get() throws InterruptedException, ExecutionException {
+        if(Thread.interrupted())
+            throw new InterruptedException();
+        if(this.getCause()!=null)
+            throw new ExecutionException(this.getCause());
+        return logs;
+    }
 
     @Override
     public void run()
     {
         c.connect();
-        c.send("login "+c.getClientID());
-        for(String request : reqs)
-            c.send(request);
-        c.send("bye and log transfer");
+        if(showSendRes)
+        {
+            System.out.println(c.send("login "+c.getClientID()));
+            for(String request : reqs)
+                System.out.println(c.send(request));
+            System.out.println(c.send("bye and log transfer"));
+        }
+        else
+        {
+            c.send("login "+c.getClientID());
+            for(String request : reqs)
+                c.send(request);
+            c.send("bye and log transfer");
+        }
+        logs=c.send("#"+c.getClientID()+"#giveMeMyLog");
     }
 }

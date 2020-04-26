@@ -52,7 +52,7 @@ public class Client
         StringBuilder response = new StringBuilder();
         try
         {
-            server.write(StandardCharsets.UTF_8.encode(req));
+            server.write(StandardCharsets.UTF_8.encode("#"+clientID+"#"+req));
             server.read(inBuf);
             inBuf.flip();
             response.append(StandardCharsets.UTF_8.decode(inBuf));
