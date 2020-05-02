@@ -8,45 +8,20 @@ package zad4;
 
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
 
-public class ClientTask extends Throwable implements Runnable
+public class ClientTask extends FutureTask<String>
 {
-    Client c;
-    List<String> reqs;
-    boolean showSendRes;
-    private String log;
 
-    public ClientTask(Client c, List<String> reqs, boolean showSendRes)
+    public ClientTask(Callable<String> c)
     {
-        this.c = c;
-        this.reqs = reqs;
-        this.showSendRes = showSendRes;
+        super(c);
     }
 
     public static ClientTask create(Client c, List<String> reqs, boolean showSendRes)
     {
-        return new ClientTask(c,reqs,showSendRes);
-    }
-
-    public String get() throws InterruptedException, ExecutionException
-    {
-        if(this.getCause()!=null)
-            throw new ExecutionException(this.getCause());
-
-        synchronized (this)
-        {
-            while (log == null)
-                wait();
-            return log;
-        }
-    }
-
-    @Override
-    public  void run()
-    {
-        synchronized (this)
-        {
+        return new ClientTask(()->{
+            String log;
             c.connect();
             if (showSendRes)
             {
@@ -55,15 +30,20 @@ public class ClientTask extends Throwable implements Runnable
                     System.out.println(c.send(request));
                 log=c.send("bye and log transfer");
                 System.out.println(log);
+                return log;
             }
             else
             {
                 c.send("login " + c.getClientID());
                 for (String request : reqs)
                     c.send(request);
-                log=c.send("bye and log transfer");
+                return c.send("bye and log transfer");
             }
-            notify();
-        }
+        });
+    }
+
+    public String get() throws InterruptedException, ExecutionException
+    {
+        return super.get();
     }
 }
