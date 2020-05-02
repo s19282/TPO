@@ -60,7 +60,7 @@ public class Main {
     }
     s.stopServer();
     System.out.println("\n=== Server log ===");
-    System.out.println(s.getServerRequests());
+    System.out.println(s.getServerLog());
   }
 
 }

@@ -15,6 +15,7 @@ public class ClientTask extends Throwable implements Runnable
     Client c;
     List<String> reqs;
     boolean showSendRes;
+    private String log;
 
     public ClientTask(Client c, List<String> reqs, boolean showSendRes)
     {
@@ -32,31 +33,37 @@ public class ClientTask extends Throwable implements Runnable
     {
         if(this.getCause()!=null)
             throw new ExecutionException(this.getCause());
-        return c.getLog();
+
+        synchronized (this)
+        {
+            while (log == null)
+                wait();
+            return log;
+        }
     }
 
     @Override
     public  void run()
     {
+        synchronized (this)
+        {
             c.connect();
             if (showSendRes)
             {
                 System.out.println(c.send("login " + c.getClientID()));
                 for (String request : reqs)
                     System.out.println(c.send(request));
-                c.setLog(c.send("bye and log transfer"));
-                try {
-                    System.out.println(c.getLog());
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                log=c.send("bye and log transfer");
+                System.out.println(log);
             }
             else
             {
                 c.send("login " + c.getClientID());
                 for (String request : reqs)
                     c.send(request);
-                c.setLog(c.send("bye and log transfer"));
+                log=c.send("bye and log transfer");
             }
+            notify();
+        }
     }
 }

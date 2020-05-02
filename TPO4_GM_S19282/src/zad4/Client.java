@@ -19,26 +19,6 @@ public class Client
     private final String clientID;
     private SocketChannel server;
     private static final ByteBuffer inBuf = ByteBuffer.allocateDirect(1024);
-    private String log;
-
-    public String getLog() throws InterruptedException
-    {
-            synchronized (this)
-            {
-                while (log == null)
-                    wait();
-                return log;
-            }
-    }
-
-    public void setLog(String log)
-    {
-        synchronized (this)
-        {
-            this.log = log;
-            notify();
-        }
-    }
 
     public Client(String host, int port, String id)
     {

@@ -31,6 +31,8 @@ public class Server
     private Selector selector;
     private static final ByteBuffer inBuf = ByteBuffer.allocateDirect(1024);
     ExecutorService executor;
+
+
     public Server(String host, int port)
     {
         this.host = host;
@@ -74,6 +76,7 @@ public class Server
             }
         });
     }
+
     private void response(SelectionKey key) throws IOException
     {
         SocketChannel client = (SocketChannel) key.channel();
@@ -173,7 +176,7 @@ public class Server
         executor.shutdownNow();
     }
 
-    String getServerRequests()
+    String getServerLog()
     {
         StringBuilder sb = new StringBuilder();
         for (String request : serverRequests)
