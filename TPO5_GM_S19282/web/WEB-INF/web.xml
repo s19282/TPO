@@ -20,12 +20,31 @@
 
     <context-param>
         <param-name>resBundleName</param-name>
-        <param-value>RegexParamsDef_pl</param-value>
+        <param-value>DbAccessDef_pl</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>dbName</param-name>
+        <param-value>ksidb</param-value>
     </context-param>
 
 
     <context-param>
         <param-name>commandClassName</param-name>
-        <param-value>FindCommand</param-value>
+        <param-value>DbAccess</param-value>
     </context-param>
+
+    <servlet>
+        <servlet-name>ErrorHandler</servlet-name>
+        <servlet-class>ErrorHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ErrorHandler</servlet-name>
+        <url-pattern>/errorhandler</url-pattern>
+    </servlet-mapping>
+
+    <error-page>
+        <exception-type>DbAccessException</exception-type>
+        <location>/errorhandler</location>
+    </error-page>
 </web-app>
