@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
 @WebServlet("/db")
 public class ControllerServ extends HttpServlet {
 
@@ -71,7 +72,6 @@ public class ControllerServ extends HttpServlet {
             // Ustalenie tych parametrów dla Command
             command.setParameter(pnames[i], pval);
         }
-
         // Wykonanie działań definiowanych przez Command
         // i pobranie wyników
         // Ponieważ do serwletu może naraz odwoływać sie wielu klientów

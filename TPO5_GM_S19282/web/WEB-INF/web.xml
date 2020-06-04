@@ -25,7 +25,7 @@
 
     <context-param>
         <param-name>dbName</param-name>
-        <param-value>ksidb</param-value>
+        <param-value>jdbc/ksidb</param-value>
     </context-param>
 
 

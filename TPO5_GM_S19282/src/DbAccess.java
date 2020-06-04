@@ -14,6 +14,7 @@ public class DbAccess extends CommandImpl {
             Context jndiCtx = (Context) init.lookup("java:comp/env");
             String dbName = (String) getParameter("dbName");
             dataSource = (DataSource) jndiCtx.lookup(dbName);
+            System.out.println("done");
         } catch (NamingException exc) {
             setStatusCode(1);
         }
@@ -27,7 +28,7 @@ public class DbAccess extends CommandImpl {
             synchronized(this) {
                 con = dataSource.getConnection();
             }
-
+            System.out.println("helloFromDBAcces");
             Statement stmt = con.createStatement();
 
             String cmd =  (String) getParameter("command");
