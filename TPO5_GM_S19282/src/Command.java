@@ -1,6 +1,7 @@
 import java.util.*;
 
-public interface Command {
+public interface Command
+{
     void init();
 
     void setParameter(String name, Object value);
@@ -9,7 +10,7 @@ public interface Command {
 
     void execute();
 
-    List getResults();
+    List<?> getResults();
 
     void setStatusCode(int code);
 

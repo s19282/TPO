@@ -8,31 +8,20 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 
 @WebServlet("/presentation")
-public class ResultPresent extends HttpServlet {
-
-
+public class ResultPresent extends HttpServlet
+{
     public void serviceRequest(HttpServletRequest req,
                                HttpServletResponse resp)
             throws ServletException, IOException
     {
-        System.out.println("Presentation");
         ServletContext context = getServletContext();
-
-        // Włączenie strony generowanej przez serwlet pobierania parametrów
-        // (formularz)
         String getParamsServ = context.getInitParameter("getParamsServ");
         RequestDispatcher disp = context.getRequestDispatcher(getParamsServ);
         disp.include(req,resp);
-
-        // Uzyskanie wyników i wyprowadzenie ich
-        // Controller po wykonaniu Command zapisał w atrybutach sesji
-        // - referencje do listy wyników jako atrybut "Results"
-        // - wartośc kodu wyniku wykonania jako atrybut "StatusCode"
 
         HttpSession ses = req.getSession();
         Lock mainLock = (Lock) ses.getAttribute("Lock");
@@ -44,34 +33,35 @@ public class ResultPresent extends HttpServlet {
         PrintWriter out = resp.getWriter();
         out.println("<hr>");
 
-        // Uzyskanie napisu właściwego dla danego "statusCode"
-        String msg = BundleInfo.getStatusMsg()[code.intValue()];
+        String msg = BundleInfo.getStatusMsg()[code];
         out.println("<h2>" + msg + "</h2>");
 
-        // Elementy danych wyjściowych (wyników) mogą być
-        // poprzedzane jakimiś opisami (zdefiniowanymi w ResourceBundle)
         String[] dopiski = BundleInfo.getResultDescr();
 
-        // Generujemy raport z wyników
         out.println("<ul>");
-        for (Iterator iter = results.iterator(); iter.hasNext(); ) {
+        for (Object result : results)
+        {
             out.println("<li>");
-
-            int dlen = dopiski.length;  // długość tablicy dopisków
-            Object res = iter.next();
-            if (res.getClass().isArray()) {  // jezeli element wyniku jest tablicą
-                Object[] res1 = (Object[]) res;
+            int dlen = dopiski.length;
+            if (result.getClass().isArray())
+            {
+                Object[] res1 = (Object[]) result;
                 int i;
-                for (i=0; i < res1.length; i++) {
+                for (i = 0; i < res1.length; i++)
+                {
                     String dopisek = (i < dlen ? dopiski[i] + " " : "");
                     out.print(dopisek + res1[i] + " ");
                 }
-                if (dlen > res1.length) out.println(dopiski[i]);
+                if (dlen > res1.length)
+                    out.println(dopiski[i]);
             }
-            else {                                      // może nie być tablicą
-                if (dlen > 0) out.print(dopiski[0] + " ");
-                out.print(res);
-                if (dlen > 1) out.println(" " + dopiski[1]);
+            else
+            {
+                if (dlen > 0)
+                    out.print(dopiski[0] + " ");
+                out.print(result);
+                if (dlen > 1)
+                    out.println(" " + dopiski[1]);
             }
             out.println("</li>");
         }

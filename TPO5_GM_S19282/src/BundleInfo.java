@@ -1,8 +1,4 @@
-import javax.servlet.*;
-import javax.servlet.http.*;
-import java.io.*;
 import java.util.*;
-
 
 class BundleInfo {
 
@@ -15,16 +11,18 @@ class BundleInfo {
     static private String charset;
     static private String submitMsg;
 
-    static void generateInfo(ResourceBundle rb) {
-
-        synchronized (BundleInfo.class) {  // konieczne ze względu
-            // na możliwość odwołań
-            List cpn = new ArrayList();      // z wielu egzemplarzy serwletów
-            List cpv = new ArrayList();
+    static void generateInfo(ResourceBundle rb)
+    {
+        synchronized (BundleInfo.class)
+        {
+            List cpn = new ArrayList<>();
+            List cpv = new ArrayList<>();
             Enumeration keys = rb.getKeys();
-            while (keys.hasMoreElements()) {
+            while (keys.hasMoreElements())
+            {
                 String key = (String) keys.nextElement();
-                if (key.startsWith("param_")) {
+                if (key.startsWith("param_"))
+                {
                     cpn.add(key.substring(6));
                     cpv.add(rb.getString(key));
                 }
@@ -40,46 +38,44 @@ class BundleInfo {
         }
     }
 
-    public static String getCharset() {
+    public static String getCharset()
+    {
         return charset;
     }
 
-    public static String getSubmitMsg() {
+    public static String getSubmitMsg()
+    {
         return submitMsg;
     }
 
-    public static String[] getCommandParamNames() {
+    public static String[] getCommandParamNames()
+    {
         return commandParamNames;
     }
 
-    public static String[] getCommandParamDescr() {
+    public static String[] getCommandParamDescr()
+    {
         return commandParamDescr;
     }
 
-    public static String[] getStatusMsg() {
+    public static String[] getStatusMsg()
+    {
         return statusMsg;
     }
 
-    public static String[] getHeaders() {
+    public static String[] getHeaders()
+    {
         return headers;
     }
 
-    public static String[] getFooters() {
+    public static String[] getFooters()
+    {
         return footers;
     }
 
-    public static String[] getResultDescr() {
+    public static String[] getResultDescr()
+    {
         return resultDescr;
     }
 
 }
-
-
-// Serwlet włączany wyłącznie z serwletu pobierania parametrów
-// Ładuje  ResourceBundle i przekazuje go klasie BundleInfo,
-// która odczytuje info i daje wygodną formę jej pobierania
-// w innych serwletach.
-// Ładowanie zasobów i ich przygotowanie przez klasę BundleInfo
-// następuje tylko raz na sesję.
-
-

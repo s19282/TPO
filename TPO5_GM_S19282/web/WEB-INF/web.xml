@@ -47,4 +47,7 @@
         <exception-type>DbAccessException</exception-type>
         <location>/errorhandler</location>
     </error-page>
+    <welcome-file-list>
+        <welcome-file>db</welcome-file>
+    </welcome-file-list>
 </web-app>

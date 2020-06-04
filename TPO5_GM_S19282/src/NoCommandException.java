@@ -1,4 +1,4 @@
-public class NoCommandException extends RuntimeException {
-    public NoCommandException() { super(); }
+public class NoCommandException extends RuntimeException
+{
     public NoCommandException(String msg) { super(msg); }
 }

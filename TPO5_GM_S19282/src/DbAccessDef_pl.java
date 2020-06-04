@@ -1,11 +1,14 @@
 import java.util.*;
 
-public class DbAccessDef_pl extends ListResourceBundle {
-    public Object[][] getContents() {
+public class DbAccessDef_pl extends ListResourceBundle
+{
+    public Object[][] getContents()
+    {
         return contents;
     }
 
-    static final Object[][] contents = {
+    static final Object[][] contents =
+     {
             { "charset", "ISO-8859-2" },
             { "header", new String[] { "Baza danych książek" } },
             { "param_command", "Polecenie (select lub insert):" },
