@@ -1,61 +1,54 @@
 import javax.jms.*;
+import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.concurrent.Executors;
+import java.util.Scanner;
+
 
 public class FullDuplexCommunication
 {
-    public static void main(String[] args) throws IOException, NamingException, JMSException, InterruptedException {
+    public static void main(String[] args) throws NamingException, JMSException, InterruptedException, IOException {
         System.out.print("Type your nick: ");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        String userName = reader.readLine();
+        Scanner s = new Scanner(System.in);
+        String name = s.nextLine();
 
-        InitialContext ctx=new InitialContext();
-        QueueConnectionFactory f=(QueueConnectionFactory)ctx.lookup("myQueueConnectionFactory");
-        QueueConnection con=f.createQueueConnection();
-        con.start();
-        QueueSession ses=con.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
-        Queue t=(Queue)ctx.lookup("myQueue");
+        Connection con = null;
+        Context ctx = new InitialContext();
+        ConnectionFactory factory = (ConnectionFactory) ctx.lookup("myQueueConnectionFactory");
+        String admTopicName = "myQueue";
+        Destination destination = (Destination) ctx.lookup(admTopicName);
+        con = factory.createConnection();
+        Session ses = con.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
-        Recieve(ses,t);
-        Send(ses,t,userName);
-
+        Recieve(ses,destination);
+        Send(con,ses,destination,name);
     }
-    public static void Recieve(QueueSession ses,Queue queue) throws JMSException, InterruptedException {
-        Executors.newSingleThreadExecutor().submit(() -> {
-            QueueReceiver receiver=ses.createReceiver(queue);
-            Listener listener = new Listener();
+    public static void Recieve(Session ses,Destination destination) throws JMSException, InterruptedException {
+        MessageConsumer receiver = ses.createConsumer(destination);
+        Listener listener = new Listener();
             receiver.setMessageListener(listener);
-            while(true)
-            {
-                Thread.sleep(1000);
-            }
-        });
     }
-    public static void Send(QueueSession ses,Queue queue,String name){
-        Executors.newSingleThreadExecutor().submit(() -> {
-            try
+    public static void Send(Connection con, Session ses,Destination destination,String name) throws JMSException, IOException {
+        MessageProducer ms = ses.createProducer(destination);
+        con.start();
+        BufferedReader b=new BufferedReader(new InputStreamReader(System.in));
+        while(true)
+        {
+            String s=b.readLine();
+            if(s.equalsIgnoreCase("end"))
             {
-                QueueSender sender=ses.createSender(queue);
-                TextMessage msg=ses.createTextMessage();
-
-                BufferedReader b=new BufferedReader(new InputStreamReader(System.in));
-                while(true)
-                {
-                    String s=b.readLine();
-                    msg.setText(name+": "+s);
-                    sender.send(msg);
-                }
+                con.close();
+                System.exit(0);
             }
-            catch (JMSException | IOException e)
+            else
             {
-                System.out.println(e);
+                TextMessage tm = ses.createTextMessage();
+                tm.setText(name+": "+s);
+                ms.send(tm);
             }
-
-        });
-
+        }
     }
 }
