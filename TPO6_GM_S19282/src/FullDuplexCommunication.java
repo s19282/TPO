@@ -1,4 +1,3 @@
-
 import javax.jms.*;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -7,17 +6,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Scanner;
-import java.util.concurrent.Executors;
+
 
 
 public class FullDuplexCommunication
 {
-    public static void main(String[] args) throws NamingException, JMSException, InterruptedException, IOException {
+    public static void main(String[] args) throws NamingException, JMSException, IOException {
         System.out.print("Type your nick: ");
         Scanner s = new Scanner(System.in);
         String name = s.nextLine();
 
-        Connection con = null;
+        Connection con;
         Context ctx = new InitialContext();
         ConnectionFactory factory = (ConnectionFactory) ctx.lookup("myCF");
         String admTopicName = "simpleChat";
@@ -25,22 +24,18 @@ public class FullDuplexCommunication
         con = factory.createConnection();
         Session ses = con.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
-        Recieve(ses,destination);
-        Send(con,ses,destination,name);
-    }
-    public static void Recieve(Session ses,Destination destination) throws JMSException, InterruptedException {
+        //recieve
         MessageConsumer receiver = ses.createConsumer(destination);
         Listener listener = new Listener();
         receiver.setMessageListener(listener);
-    }
-    public static void Send(Connection con, Session ses,Destination destination,String name) throws JMSException, IOException {
+        //send
         MessageProducer ms = ses.createProducer(destination);
         con.start();
         BufferedReader b=new BufferedReader(new InputStreamReader(System.in));
         while(true)
         {
-            String s=b.readLine();
-            if(s.equalsIgnoreCase("end"))
+            String m=b.readLine();
+            if(m.equalsIgnoreCase("end"))
             {
                 con.close();
                 System.exit(0);
@@ -48,7 +43,7 @@ public class FullDuplexCommunication
             else
             {
                 TextMessage tm = ses.createTextMessage();
-                tm.setText(name+": "+s);
+                tm.setText(name+": "+m);
                 ms.send(tm);
             }
         }
